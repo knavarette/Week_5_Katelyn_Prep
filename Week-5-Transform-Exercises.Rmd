@@ -1,0 +1,114 @@
+---
+title: "Transform Data"
+output: github_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment="")
+library(tidyverse)
+#install.packages("babynames")
+library(babynames)
+```
+
+
+# dplyr
+
+## Your Turn 1
+
+Alter the code to select just the `n` column:
+
+```{r}
+View(babynames)
+select(babynames, n)
+ggplot(data = babynames)+
+  geom_line(mapping = aes(x = year, y = prop))
+```
+
+## Quiz
+
+Which of these is NOT a way to select the `name` and `n` columns together? `select(babynames, ends_with("n"))`
+
+```{r}
+select(babynames, -c(year, sex, prop)) # works because it is selecting everything but year, sex, and prop
+select(babynames, name:n) # works because it is selecting everything between names and n
+select(babynames, starts_with("n")) # starts with n and none of the other variables start with n 
+select(babynames, ends_with("n")) ## n starts and ends with n but doesn't show name because it does not 
+```
+
+## Your Turn 2
+
+Use `filter`, `babynames`, and the logical operators to find:
+
+* All of the names where prop is greater than or equal to 0.08  
+* All of the children named "Sea"  
+
+```{r}
+filter(babynames, prop >= 0.08)
+filter(babynames, name == "Sea")
+```
+
+## Your Turn 3
+
+Use Boolean operators to return only the rows that contain:
+
+* _Boys_ named Sue  
+* Names that were used by exactly 5 or 6 children in 1880  
+* Names that are one of Acura, Lexus, or Yugo
+
+```{r}
+filter(babynames, sex == "M", name=="Sue")
+filter(babynames, n ==5|6)
+filter(babynames, name == "Acura"| name == "Lexus"| name == "Yugo")
+```
+
+## Help Me
+
+What is the smallest value of n? 5
+What is the largest?
+
+```{r}
+arrange(babynames, n)
+arrange(babynames, desc(n))
+```
+
+## Your Turn 4
+
+Use `%>%` to write a sequence of functions that: 
+
+1. Filters babynames to just the girls that were born in 2017, *then...*  
+2. Selects the `name` and `n` columns, *then...*  
+3. Arranges the results so that the most popular names are near the top.
+
+```{r}
+babynames %>% 
+filter(sex == "F", year == "2017") %>% 
+  select(name,n) %>% 
+  arrange(desc(n)) -> girls_2017 
+```
+
+## Your Turn 5
+
+1. Trim `babynames` to just the rows that contain **your** `name` and **your** `sex`  
+2. Trim the result to just the columns that will appear in your graph (not strictly necessary, but useful practice)  
+3. Plot the results as a line graph with `year` on the x axis and `prop` on the y axis
+
+```{r}
+babynames %>% 
+  filter(name == "Mae", sex == "F") %>% 
+  select(year, prop) %>% 
+  ggplot( aes(x = year, y = prop)) +
+  geom_line( color = "#77815C", size = 1.15)+
+  labs(x= "Year", y = "Proortion of Femails Born", title = "Popularity of Females named Mae")
+
+```
+
+***
+
+# Take aways
+
+* Extract variables with `select()`  
+* Extract cases with `filter()`  
+* Arrange cases, with `arrange()`  
+
+
